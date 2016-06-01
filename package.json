@@ -1,0 +1,21 @@
+{
+  "name": "nickis_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node bin/bot.js",
+    "test": "mocha test/"
+  },
+  "author": "bananaCypher",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^2.5.3"
+  },
+  "dependencies": {
+    "slackbots": "^0.5.1"
+  }
+}
