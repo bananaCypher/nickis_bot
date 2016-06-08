@@ -1,14 +1,17 @@
 'use strict'
 const GoogleSpreadsheet = require('google-spreadsheet');
 const moment = require('moment');
+const utilities = require('./utilities');
 const client_email = process.env.NICKIS_SHEET_EMAIL;
 const private_key = process.env.NICKIS_SHEET_KEY.replace(/\\n/g, '\n');
 const HEADERS = ['Name', 'Filling 1', 'Filling 2'];
  
 // spreadsheet key is the long id in the sheets URL 
-let doc = new GoogleSpreadsheet(process.env.NICKIS_SHEET_ID);
+const doc = new GoogleSpreadsheet(process.env.NICKIS_SHEET_ID);
 
 const authenticate = function(email, key) {
+  email = email;
+  key = key;
   return new Promise(function(resolve, reject) {
     const creds_json = {
       client_email: email,
@@ -146,22 +149,26 @@ const applyObjectToRow = function(row, obj){
 }
 
 // string(string) => keySafe(string)
-const keySafeString = function(string){
-  return string.toLowerCase().replace(/ /g, "");
+const keySafeString = function(unsafe){
+  return unsafe.toLowerCase().replace(/ /g, "");
+}
+
+const updateRotaSheet = function(){
+  return new Promise(function(resolve, reject) {
+    getSheet('rota')
+      .then(getRows)
+      .then(users => users.map( user => {
+        const thisFriday = utilities.getFridayDate();
+        let userFriday = moment(user.nextnickisdate, 'DD/MM/YY').format('X');
+        if(userFriday === 'invalid date'){userFriday = 0}
+        if (userFriday < thisFriday){
+
+        }
+      } ))
+  });
 }
 
 authenticate(client_email, private_key).then(function() {
-  createSheet('test sheet').then(function(sheet){
-    addHeadersToSheet(sheet, HEADERS);
-  });
-  getSheet('Sheet1').then(getRows).then(function(rows){
-    rows.forEach((row) => {
-      var obj = rowToObject(row, HEADERS);
-      obj.name = 'fuck off';
-      row = applyObjectToRow(row, obj);
-      saveRow(row);
-    }); 
-  });
 }, function (err) {
   throw err;
 });
@@ -180,6 +187,21 @@ module.exports = {
             }
           });
       }).catch(reject);
+    });
+  },
+  getNextUser: function(){
+    return new Promise(function(resolve, reject) {
+      updateRotaSheet();
+      getSheet('rota')
+        .then(getRows)
+        .then(rows => resolve(rows.sort((x, y) => {
+          let xMoment = moment(x.nextnickisdate, 'DD/MM/YY').format('X');
+          if(xMoment === 'invalid date'){xMoment = 0}
+          let yMoment = moment(y.nextnickisdate, 'DD/MM/YY').format('X');
+          if(yMoment === 'invalid date'){yMoment = 0}
+          console.log(xMoment - yMoment);
+          return xMoment - yMoment;
+        })[0]))
     });
   }
 }

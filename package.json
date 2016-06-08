@@ -2,13 +2,16 @@
   "name": "nickis_bot",
   "version": "1.0.0",
   "description": "",
-  "main": "bin/index.js",
+  "main": "build/bin/bot.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "start": "node bin/bot.js",
-    "test": "mocha test/"
+    "start": "node build/bin/bot.js",
+    "test": "mocha test/",
+    "build": "tsc",
+    "build-watch": "tsc --watch",
+    "typescript-install": "sudo npm install -g typescript ts-node typings && typings install env~node --save --global"
   },
   "author": "bananaCypher",
   "license": "ISC",

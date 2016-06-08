@@ -1,4 +1,4 @@
-module.exports = [
+const fillings: string[] = [
   "bacon",
   "fried egg",
   "haggis",
@@ -8,4 +8,6 @@ module.exports = [
   "sausage",
   "black pudding",
   "lorne"
-];
+]
+
+module.exports = fillings
